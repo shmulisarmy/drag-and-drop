@@ -8,18 +8,20 @@
       <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
       <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
       <style>
-        .item{
-            margin: 2px;
+        main{
+            display: flex;
+            justify-content: center;
         }
-        .item:hover{
-            cursor: pointer;
-        }
-        .item:active{
+  
+        .box{
+            margin-top: 100px;
+            margin-bottom: 100px;
             background-color: blue;
-            position: absolute;
-            top: var(--cursor-top);
-            left: var(--cursor-left);
-            z-index: -1;
+            width: 100px;
+            height: 200px;
+        }
+        h1:active{
+            background-color: red;
         }
       </style>
 </head>
@@ -31,76 +33,48 @@
 
 
     <script type="text/babel">
+        let holdingData;
 
 
-
-            document.addEventListener('mousemove', function(event) {
-                const x = event.clientX;
-                const y = event.clientY;
-
-                document.querySelectorAll(".item").forEach(item => {
-                    item.style.setProperty('--cursor-top', `${y}px`);
-                    item.style.setProperty('--cursor-left', `${x}px`);
-                });
-
-                console.log("held: ", held)
-
-            });
-
-
-        function App(){
-            const [list, setList] = React.useState([
-                "you",
-                "are",
-                "the",
-                "best",
-                "person",
-                "i know",
-            ])
-            const [held, setHeld] = React.useState(null);
-
-            
-            
-            return(
-                <div>
-                    {list.map((item, index) => 
-                        <div class="item"
-                        onClick={() => {setHeld(index)}}
-                        onMouseEnter={() => {
-                            if (held == null || held == index){
-                                return
-                            }
-
-
-                            const newList = [...list]
-                            const temp = newList[index];
-                            newList[index] = newList[held];
-                            newList[held] = temp;
-                            console.log("newList:", newList)
-                            setList(newList)
-                        }}
-                        > 
-                            {item}
+            function App(){
+                const list = [
+                    "hello",
+                    "how",
+                    "are",
+                    "you",
+                    "doing",
+                    "bro",
+                ]
+                const [box, setBox] = React.useState([])
+                
+                return (
+                    <main>
+                        <div>
+                            {list.map(item => 
+                                <div draggable onDragStart={(e) => {
+                                    holdingData = item
+                                }}>
+                                    <h1>{item}</h1>    
+                                    </div>
+                                    )}
+                                    
+                                    </div>
+                        <div class="box" onDragOver={(e) => {e.preventDefault()}} onDrop={() => {
+                            const newBox = [...box, holdingData];
+                            console.log(newBox)
+                            setBox(newBox)
+                        }}>
+                            {box.map(item => 
+                                <div >
+                                    <h1>{item}</h1>    
+                                </div>
+                                    )}
+                                    
+                            
                         </div>
-                    )}
-
-                    <button
-                    onClick={() => {
-                        const newList = [...list]
-                        const temp = newList[3];
-                        newList[3] = newList[1];
-                        newList[1] = temp;
-                        console.log("newList:", newList)
-                        setList(newList)
-                }}
-                    >swap</button>
-                    
-                    
-                </div>
-
-
-            )
-        }
+                    </main>
+                    )
+            }
 
 
 
