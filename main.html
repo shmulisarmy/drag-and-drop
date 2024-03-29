@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>drag and drop</title>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+      <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+      <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+      <style>
+        .item{
+            margin: 2px;
+        }
+        .item:hover{
+            cursor: pointer;
+        }
+        .item:active{
+            background-color: blue;
+            position: absolute;
+            top: var(--cursor-top);
+            left: var(--cursor-left);
+            z-index: -1;
+        }
+      </style>
+</head>
+<body>
+
+
+    <div id="root"></div>
+    
+
+
+    <script type="text/babel">
+
+
+
+            document.addEventListener('mousemove', function(event) {
+                const x = event.clientX;
+                const y = event.clientY;
+
+                document.querySelectorAll(".item").forEach(item => {
+                    item.style.setProperty('--cursor-top', `${y}px`);
+                    item.style.setProperty('--cursor-left', `${x}px`);
+                });
+
+                console.log("held: ", held)
+
+            });
+
+
+        function App(){
+            const [list, setList] = React.useState([
+                "you",
+                "are",
+                "the",
+                "best",
+                "person",
+                "i know",
+            ])
+            const [held, setHeld] = React.useState(null);
+
+            
+            
+            return(
+                <div>
+                    {list.map((item, index) => 
+                        <div class="item"
+                        onClick={() => {setHeld(index)}}
+                        onMouseEnter={() => {
+                            if (held == null || held == index){
+                                return
+                            }
+
+
+                            const newList = [...list]
+                            const temp = newList[index];
+                            newList[index] = newList[held];
+                            newList[held] = temp;
+                            console.log("newList:", newList)
+                            setList(newList)
+                        }}
+                        > 
+                            {item}
+                        </div>
+                    )}
+
+                    <button
+                    onClick={() => {
+                        const newList = [...list]
+                        const temp = newList[3];
+                        newList[3] = newList[1];
+                        newList[1] = temp;
+                        console.log("newList:", newList)
+                        setList(newList)
+                }}
+                    >swap</button>
+                    
+                    
+                </div>
+
+
+            )
+        }
+
+
+
+     ReactDOM.render(<App />, document.querySelector('#root'));
+    </script>
+</body>
+</html>
