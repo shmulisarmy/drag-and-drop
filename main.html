@@ -23,6 +23,10 @@
         h1:active{
             background-color: red;
         }
+        .hidden{
+   
+            transform: scale(.2);
+        }
       </style>
 </head>
 <body>
@@ -46,6 +50,12 @@
                     "bro",
                 ]
                 const [box, setBox] = React.useState([])
+                const [dragging, setDragging] = React.useState(false)
+
+                React.useEffect(() => {
+                    setBox(box)
+                }, [dragging])
+                
                 
                 return (
                     <main>
@@ -53,7 +63,8 @@
                             {list.map(item => 
                                 <div draggable onDragStart={(e) => {
                                     holdingData = item
-                                }}>
+                                    setDragging(true)
+                                }} class={(dragging && holdingData == item)? "hidden": "reg"}>
                                     <h1>{item}</h1>    
                                     </div>
                                     )}
