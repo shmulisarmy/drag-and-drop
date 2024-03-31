@@ -8,18 +8,34 @@
       <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
       <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
       <style>
+        body{
+            background-color: black;
+
+        }
+        main{
+            margin: 4%;
+            display: flex;
+            gap: 20px;
+        }
+        .list{
+            width: 200px;
+            border: 1px solid black;
+            border-radius: 10px;
+            background-color: grey;
+
+        }
         .item{
-            margin: 2px;
+            margin: 8px;
+            border: 1px solid black;
+            border-radius: 10px;
+            background-color: white;
         }
         .item:hover{
             cursor: pointer;
         }
-        .item:active{
-            background-color: blue;
-            position: absolute;
-            top: var(--cursor-top);
-            left: var(--cursor-left);
-            z-index: -1;
+        main .item:active{
+            border: 1px solid purple;
+            
         }
       </style>
 </head>
@@ -48,7 +64,7 @@
             });
 
 
-        function App(){
+        function List(){
             const [list, setList] = React.useState([
                 "you",
                 "are",
@@ -57,49 +73,48 @@
                 "person",
                 "i know",
             ])
-            const [held, setHeld] = React.useState(null);
-
-            
-            
+            const clonedList = [...list]
+            let held, entered;
             return(
-                <div>
+                <div class="list">
                     {list.map((item, index) => 
-                        <div class="item"
-                        onClick={() => {setHeld(index)}}
-                        onMouseEnter={() => {
-                            if (held == null || held == index){
+                        <div class="item" draggable
+                        onDragStart={() => {
+                            held = index
+                        }}
+                        onDragEnter={() => {entered = index}}
+                        onDragEnd={() => {
+                            console.log("on drag")
+                            if (held == null){
                                 return
                             }
 
 
-                            const newList = [...list]
-                            const temp = newList[index];
-                            newList[index] = newList[held];
-                            newList[held] = temp;
-                            console.log("newList:", newList)
-                            setList(newList)
+                            const temp = clonedList[entered];
+                            clonedList[entered] = clonedList[held];
+                            clonedList[held] = temp;
+                            console.log("clonedList:", clonedList)
+                            setList(clonedList)
                         }}
                         > 
-                            {item}
+                            <h3>issue: {item}</h3>
+                            <input type="text"/>
+                            <button>comment</button>
                         </div>
-                    )}
-
-                    <button
-                    onClick={() => {
-                        const newList = [...list]
-                        const temp = newList[3];
-                        newList[3] = newList[1];
-                        newList[1] = temp;
-                        console.log("newList:", newList)
-                        setList(newList)
-                }}
-                    >swap</button>
-                    
-                    
+                    )}                    
                 </div>
-
-
             )
+        }
+
+        function App(){
+            return (
+                <main>
+                    <List/> 
+                    <List/> 
+                    <List/> 
+                    <List/> 
+                </main>
+                )
         }
 
 
