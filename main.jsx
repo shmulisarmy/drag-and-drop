@@ -9,18 +9,26 @@ function List() {
   ]);
   const [comments, setComments] = React.useState([[], [], [], [], [], []]);
 
-  const clonedList = [...list];
   let held, entered;
 
   function dragEnter(index) {
     entered = index;
   }
   function dragEnd() {
-    const temp = clonedList[entered];
+    const clonedList = [...list];
+    const clonedComments = [...comments];
+
+    var temp = clonedList[entered];
     clonedList[entered] = clonedList[held];
     clonedList[held] = temp;
     console.log("clonedList:", clonedList);
     setList(clonedList);
+
+    temp = clonedComments[entered];
+    clonedComments[entered] = clonedComments[held];
+    clonedComments[held] = temp;
+    console.log("clonedComments:", clonedComments);
+    setComments(clonedComments);
   }
 
   function dragStart(index) {
@@ -104,7 +112,7 @@ function Task({
   setComments,
   comments,
 }) {
-  const [showComments, setShowComments] = React.useState(false);
+  const [showComments, setShowComments] = React.useState(true);
 
   return (
     <div
