@@ -142,7 +142,6 @@ function App() {
 }
 
 function Task({ rowIndex, colIndex, item, setComments, comments }) {
-  const [showComments, setShowComments] = React.useState(true);
   const dragStart = React.useContext(dragContext);
   const deleteTask = React.useContext(deleteTaskContext);
 
@@ -161,21 +160,8 @@ function Task({ rowIndex, colIndex, item, setComments, comments }) {
         X
       </button>
       <h3 class="issue-text">{item}</h3>
-      <button onClick={() => setShowComments(!showComments)}>
-        {showComments? "hide comments" : `show (${comments[rowIndex][colIndex].length}) comments`}{" "}
-      </button>
-      {showComments? (
-        <div class="comments">
-          {comments[rowIndex][colIndex].slice().reverse().map((cmnt) => (
-            <p>{cmnt}</p>
-          ))}
-        </div>
-      ) : (
-        ""
-      )}
-      <AddCommentForm
-        {...{rowIndex, colIndex}}
-      />
+      <CommentsManager  {...{rowIndex, colIndex}} comments={comments[rowIndex][colIndex]}/>
+
     </div>
   );
 }
@@ -214,7 +200,26 @@ function AddCommentForm({
   );
 }
 
-const thisUser = "shmuli";
+
+    function CommentsManager({comments, rowIndex, colIndex}) {
+    const [showComments, setShowComments] = React.useState(true);
+      return (<div className="comments-manager">
+
+      <button onClick={() => setShowComments(!showComments)}>
+        {showComments ? "hide comments" : `show (${comments.length}) comments`}{" "}
+      </button>
+      {showComments ? <div class="comments">
+          {comments.slice().reverse().map(cmnt => <p>{cmnt}</p>)}
+        </div> : ""}
+      <AddCommentForm {...{
+    rowIndex,
+    colIndex
+  }} />
+      </div>);
+    }
+  
+
+  const thisUser = "shmuli";
 const dragContext = React.createContext(null);
 const deleteTaskContext = React.createContext(null);
 const createCommentContext = React.createContext(null);
