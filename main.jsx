@@ -62,9 +62,9 @@ function App() {
 
   let held, entered;
 
-  function createComment(rowIndex, colIndex, input){
-        comments[rowIndex][colIndex].push(`${thisUser}: ${input}`);
-        setComments([...comments]);
+  function createComment(rowIndex, colIndex, input) {
+    comments[rowIndex][colIndex].push(`${thisUser}: ${input}`);
+    setComments([...comments]);
   }
 
   function deleteTask(rowIndex, colIndex) {
@@ -76,6 +76,16 @@ function App() {
 
     setLists(clonedLists);
     setComments(clonedComments);
+  }
+  function editTask(rowIndex, colIndex, newTaskName) {
+    if (newTaskName){
+
+        const clonedLists = [...lists];
+        
+        clonedLists[rowIndex][colIndex] = newTaskName;
+        
+        setLists(clonedLists);
+    }
   }
 
   function addTask(rowIndex, inputText) {
@@ -115,26 +125,28 @@ function App() {
   const listNames = ["todo", "doing", "done"];
   return (
     <main>
-        
       <createCommentContext.Provider value={createComment}>
-      <dragContext.Provider value={dragStart}>
-        <deleteTaskContext.Provider value={deleteTask}>
-          {listNames.map((listName, rowIndex) => (
-            <List
-              {...{
-                listName,
-                rowIndex,
-                comments,
-                setComments,
-                dragEnter,
-                dragEnd,
-                addTask,
-              }}
-              entered={entered == rowIndex}
-              list={lists[rowIndex]}
-            />
-          ))}
-        </deleteTaskContext.Provider>
+        <dragContext.Provider value={dragStart}>
+          <deleteTaskContext.Provider value={deleteTask}>
+          <editTaskContext.Provider value={editTask}>
+          
+            {listNames.map((listName, rowIndex) => (
+              <List
+                {...{
+                  listName,
+                  rowIndex,
+                  comments,
+                  setComments,
+                  dragEnter,
+                  dragEnd,
+                  addTask,
+                }}
+                entered={entered == rowIndex}
+                list={lists[rowIndex]}
+              />
+            ))}
+            </editTaskContext.Provider>
+            </deleteTaskContext.Provider>
         </dragContext.Provider>
       </createCommentContext.Provider>
     </main>
@@ -144,13 +156,16 @@ function App() {
 function Task({ rowIndex, colIndex, item, setComments, comments }) {
   const dragStart = React.useContext(dragContext);
   const deleteTask = React.useContext(deleteTaskContext);
-
+  const editTask = React.useContext(editTaskContext);
+  
   return (
     <div
       class="item"
       draggable
       onDragStart={() => dragStart(rowIndex, colIndex)}
     >
+        <div className="delete-and-edit-task-buttons">
+
       <button
         class="delete-task-button"
         onClick={() => {
@@ -159,19 +174,22 @@ function Task({ rowIndex, colIndex, item, setComments, comments }) {
       >
         X
       </button>
-      <h3 class="issue-text">{item}</h3>
-      <CommentsManager  {...{rowIndex, colIndex}} comments={comments[rowIndex][colIndex]}/>
+        <img class="edit-button" src="assets/notepad.png" onClick={() => editTask(rowIndex, colIndex, prompt("new task name: "))} alt="" />
 
+      </div>
+
+      <div class="task-name">
+        <h3>{item}</h3>
+        </div>
+      <CommentsManager
+        {...{ rowIndex, colIndex }}
+        comments={comments[rowIndex][colIndex]}
+      />
     </div>
   );
 }
 
-
-
-function AddCommentForm({
-  rowIndex,
-  colIndex,
-}) {
+function AddCommentForm({ rowIndex, colIndex }) {
   const commentInputRef = React.useRef();
   const createComment = React.useContext(createCommentContext);
 
@@ -190,8 +208,7 @@ function AddCommentForm({
             return;
           }
 
-          createComment(rowIndex, colIndex, input)
-          
+          createComment(rowIndex, colIndex, input);
         }}
       >
         comment
@@ -200,27 +217,38 @@ function AddCommentForm({
   );
 }
 
-
-    function CommentsManager({comments, rowIndex, colIndex}) {
-    const [showComments, setShowComments] = React.useState(true);
-      return (<div className="comments-manager">
-
+function CommentsManager({ comments, rowIndex, colIndex }) {
+  const [showComments, setShowComments] = React.useState(true);
+  return (
+    <div className="comments-manager">
       <button onClick={() => setShowComments(!showComments)}>
-        {showComments ? "hide comments" : `show (${comments.length}) comments`}{" "}
+        {showComments ? "hide comments" : `show (${comments.length}) comments`}
       </button>
-      {showComments ? <div class="comments">
-          {comments.slice().reverse().map(cmnt => <p>{cmnt}</p>)}
-        </div> : ""}
-      <AddCommentForm {...{
-    rowIndex,
-    colIndex
-  }} />
-      </div>);
-    }
-  
+      {showComments ? (
+        <div class="comments">
+          {comments
+            .slice()
+            .reverse()
+            .map((cmnt) => (
+              <p>{cmnt}</p>
+            ))}
+        </div>
+      ) : (
+        ""
+      )}
+      <AddCommentForm
+        {...{
+          rowIndex,
+          colIndex,
+        }}
+      />
+    </div>
+  );
+}
 
-  const thisUser = "shmuli";
+const thisUser = "shmuli";
 const dragContext = React.createContext(null);
 const deleteTaskContext = React.createContext(null);
 const createCommentContext = React.createContext(null);
+const editTaskContext = React.createContext(null);
 ReactDOM.render(<App />, document.querySelector("#root"));
