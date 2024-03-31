@@ -113,6 +113,7 @@ function Task({
   comments,
 }) {
   const [showComments, setShowComments] = React.useState(true);
+  const commentInputRef = React.useRef()  
 
   return (
     <div
@@ -131,18 +132,25 @@ function Task({
           <p>{cmnt}</p>
         ))}
       </div>: ""}
+      <form >
 
-      <input type="text" />
-      <button
-        onClick={() => {
-          const input = "this is a comment";
+      <input ref={commentInputRef} type="text" />
+      <button type="submit"
+        onClick={(event) => {
+            event.preventDefault()
+          const input = commentInputRef.current.value;
+          if (!input){
+            return
+          }
           comments[index].push(input);
           setComments([...comments]);
           setShowComments(true)
+          commentInputRef.current.value = ''
         }}
       >
         comment
       </button>
+      </form>
     </div>
   );
 }
