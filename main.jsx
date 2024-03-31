@@ -66,7 +66,7 @@ function App() {
 }
 
 
-function Task({ rowindex, colindex, item, setComments, comments }) {
+function Task({ rowIndex, colIndex, item, setComments, comments }) {
   const [showComments, setShowComments] = React.useState(true);
   const commentInputRef = React.useRef();
   const { dragStart, dragEnter, dragEnd } = React.useContext(dragContext);
@@ -75,9 +75,9 @@ function Task({ rowindex, colindex, item, setComments, comments }) {
     <div
       class="item"
       draggable
-      onDragStart={() => dragStart(rowindex, colindex)}
+      onDragStart={() => dragStart(rowIndex, colIndex)}
       onDragEnter={() => {
-        dragEnter(rowindex, colindex);
+        dragEnter(rowIndex, colIndex);
       }}
       onDragEnd={dragEnd}
     >
@@ -87,7 +87,7 @@ function Task({ rowindex, colindex, item, setComments, comments }) {
       </button>
       {showComments ? (
         <div class="comments">
-          {comments[rowindex][colindex].map((cmnt) => (
+          {comments[rowIndex][colIndex].map((cmnt) => (
             <p>{cmnt}</p>
           ))}
         </div>
@@ -105,7 +105,7 @@ function Task({ rowindex, colindex, item, setComments, comments }) {
                 alert("no content provided as input")
               return;
             }
-            comments[rowindex][colindex].push(input);
+            comments[rowIndex][colIndex].push(input);
             commentInputRef.current.value = "";
             setComments([...comments]);
             setShowComments(true);
