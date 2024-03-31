@@ -1,3 +1,10 @@
+const EmptyListMessage = () => {
+    return (
+            <h3 style={{ color: 'darkorange', padding: "8px" }}>This list is empty. would you like to add a task</h3>
+    )
+}
+
+
 function List({ listName, rowIndex, list, comments, setComments, dragEnter, dragEnd, entered, addTask }) {
     const inputRef = React.useRef()
   return (
@@ -10,7 +17,7 @@ function List({ listName, rowIndex, list, comments, setComments, dragEnter, drag
       <h1>
         #{rowIndex + 1}: {listName}
       </h1>
-      {list.map((item, colIndex) => (
+      {list.length == 0?  <EmptyListMessage/>: list.map((item, colIndex) => (
         <Task {...{ colIndex, rowIndex, item, setComments, comments }} />
       ))}
       <form class="add-task-form">
@@ -18,6 +25,7 @@ function List({ listName, rowIndex, list, comments, setComments, dragEnter, drag
       <button onClick={(e) => {
         e.preventDefault()
         const inputText = inputRef.current.value;
+        inputRef.current.value = "";
         if (!inputText){
             return
         }
@@ -30,9 +38,9 @@ function List({ listName, rowIndex, list, comments, setComments, dragEnter, drag
 
 function App() {
   const [lists, setLists] = React.useState([
-    ["you", "are", "the"],
-    ["best", "person", "i know"],
-    ["the", "coolest", "person"],
+    [],
+    [],
+    [],
   ]);
   const [comments, setComments] = React.useState([
     [[], [], []],
@@ -41,6 +49,17 @@ function App() {
   ]);
 
   let held, entered;
+
+  function deleteTask(rowIndex, colIndex){
+    const clonedLists = [...lists];
+    const clonedComments = [...comments];
+
+    delete clonedLists[rowIndex][colIndex]
+    delete clonedComments[rowIndex][colIndex]
+
+    setLists(clonedLists)
+    setComments(clonedComments)
+  }
 
   function addTask(rowIndex, inputText){
     const clonedLists = [...lists];
@@ -81,6 +100,7 @@ function App() {
   return (
     <main>
       <dragContext.Provider value={dragStart}>
+      <deleteTaskContext.Provider value={deleteTask}>
         {listNames.map((listName, rowIndex) => (
           <List
             {...{ listName, rowIndex, comments, setComments, dragEnter, dragEnd, addTask }}
@@ -88,6 +108,7 @@ function App() {
             list={lists[rowIndex]}
           />
         ))}
+      </deleteTaskContext.Provider>
       </dragContext.Provider>
     </main>
   );
@@ -98,6 +119,7 @@ function Task({ rowIndex, colIndex, item, setComments, comments }) {
   const [showComments, setShowComments] = React.useState(true);
   const commentInputRef = React.useRef();
   const dragStart  = React.useContext(dragContext);
+  const deleteTask  = React.useContext(deleteTaskContext);
 
   return (
     <div
@@ -105,7 +127,8 @@ function Task({ rowIndex, colIndex, item, setComments, comments }) {
       draggable
       onDragStart={() => dragStart(rowIndex, colIndex)}
     >
-      <h3>issue: {item}</h3>
+        <button class="delete-task-button" onClick={() => {deleteTask(rowIndex, colIndex)}}>X</button>
+      <h3 class="issue-text">issue: {item}</h3>
       <button onClick={() => setShowComments(!showComments)}>
         {showComments ? "hide comments" : "show comments"}{" "}
       </button>
@@ -144,4 +167,5 @@ function Task({ rowIndex, colIndex, item, setComments, comments }) {
 
 const thisUser = "shmuli"
 const dragContext = React.createContext(null);
+const deleteTaskContext = React.createContext(null);
 ReactDOM.render(<App />, document.querySelector("#root"));

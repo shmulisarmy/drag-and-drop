@@ -44,11 +44,22 @@ main{
 
 }
 .item{
+    position: relative;
     margin: 8px;
     border: 1px solid black;
     border-radius: 10px;
     background-color: black;
     color: white;
+}
+
+.item .issue-text{
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -ms-word-break: break-all;
+    word-break: break-word;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
 }
 .item:hover, .item:active{
     cursor: cell;
@@ -90,4 +101,12 @@ input{
     border: 2px solid darkcyan;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+}
+.delete-task-button{
+    background-color: red;
+    color: black;
+    position: absolute;
+    top: 1%;
+    left: 1%;
+    border-radius: 100%;
 }
