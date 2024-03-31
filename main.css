@@ -85,3 +85,9 @@ input{
 .item:drag-over {
     background-color: rgba(128, 0, 128, 0.3);
 }
+
+.add-task-form{
+    border: 2px solid darkcyan;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}

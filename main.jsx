@@ -1,5 +1,5 @@
-function List({ listName, rowIndex, list, comments, setComments, dragEnter, dragEnd, entered }) {
-    
+function List({ listName, rowIndex, list, comments, setComments, dragEnter, dragEnd, entered, addTask }) {
+    const inputRef = React.useRef()
   return (
     <div class={entered? "list entered": "list"}
     onDragEnter={() => {
@@ -13,6 +13,17 @@ function List({ listName, rowIndex, list, comments, setComments, dragEnter, drag
       {list.map((item, colIndex) => (
         <Task {...{ colIndex, rowIndex, item, setComments, comments }} />
       ))}
+      <form class="add-task-form">
+        <input ref={inputRef} type="text" />
+      <button onClick={(e) => {
+        e.preventDefault()
+        const inputText = inputRef.current.value;
+        if (!inputText){
+            return
+        }
+        addTask(rowIndex, inputText)
+      }}>add task</button>
+      </form>
     </div>
   );
 }
@@ -30,6 +41,17 @@ function App() {
   ]);
 
   let held, entered;
+
+  function addTask(rowIndex, inputText){
+    const clonedLists = [...lists];
+    const clonedComments = [...comments];
+
+    clonedLists[rowIndex].push(inputText)
+    clonedComments[rowIndex].push([])
+
+    setLists(clonedLists)
+    setComments(clonedComments)
+  }
 
   function dragStart(rowIndex, colIndex) {
     held = [rowIndex, colIndex];
@@ -61,7 +83,7 @@ function App() {
       <dragContext.Provider value={dragStart}>
         {listNames.map((listName, rowIndex) => (
           <List
-            {...{ listName, rowIndex, comments, setComments, dragEnter, dragEnd }}
+            {...{ listName, rowIndex, comments, setComments, dragEnter, dragEnd, addTask }}
             entered={entered == rowIndex}
             list={lists[rowIndex]}
           />
@@ -107,7 +129,7 @@ function Task({ rowIndex, colIndex, item, setComments, comments }) {
                 alert("no content provided as input")
               return;
             }
-            comments[rowIndex][colIndex].push(input);
+            comments[rowIndex][colIndex].push(`${thisUser}: ${input}`);
             commentInputRef.current.value = "";
             setComments([...comments]);
             setShowComments(true);
@@ -120,5 +142,6 @@ function Task({ rowIndex, colIndex, item, setComments, comments }) {
   );
 }
 
+const thisUser = "shmuli"
 const dragContext = React.createContext(null);
 ReactDOM.render(<App />, document.querySelector("#root"));
