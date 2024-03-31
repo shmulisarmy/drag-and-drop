@@ -1,6 +1,12 @@
-function List({ listName, rowIndex, list, comments, setComments }) {
+function List({ listName, rowIndex, list, comments, setComments, dragEnter, dragEnd, entered }) {
+    
   return (
-    <div class="list">
+    <div class={entered? "list entered": "list"}
+    onDragEnter={() => {
+        dragEnter(rowIndex);
+      }}
+     
+      onDragEnd={dragEnd}>
       <h1>
         #{rowIndex + 1}: {listName}
       </h1>
@@ -29,34 +35,34 @@ function App() {
     held = [rowIndex, colIndex];
   }
 
-  function dragEnter(rowIndex, colIndex) {
-    entered = [rowIndex, colIndex];
+  function dragEnter(rowIndex) {
+      
+      entered = rowIndex
   }
   function dragEnd() {
+    const [rowIndex, colIndex] = held
+
     const clonedLists = [...lists];
     const clonedComments = [...comments];
+    
+    clonedLists[entered].push(lists[rowIndex][colIndex])
+    delete clonedLists[rowIndex][colIndex]
 
-    var temp = clonedLists[entered[0]][entered[1]];
-    clonedLists[entered] = clonedLists[entered[0]][entered[1]];
-    clonedLists[held] = temp;
-    console.log("clonedLists:", clonedLists);
-    setLists(clonedLists);
+    clonedComments[entered].push(comments[rowIndex][colIndex])
+    delete clonedComments[rowIndex][colIndex]
 
-    temp = clonedComments[entered[0]][entered[1]];
-    clonedComments[entered[0]][entered[1]] =
-      clonedComments[entered[0]][entered[1]];
-    clonedComments[entered[0]][entered[1]] = temp;
-    console.log("clonedComments:", clonedComments);
-    setComments(clonedComments);
+    setLists(clonedLists)
+    setComments(clonedComments)
   }
 
   const listNames = ["todo", "doing", "done"];
   return (
     <main>
-      <dragContext.Provider value={{ dragStart, dragEnter, dragEnd }}>
+      <dragContext.Provider value={dragStart}>
         {listNames.map((listName, rowIndex) => (
           <List
-            {...{ listName, rowIndex, comments, setComments }}
+            {...{ listName, rowIndex, comments, setComments, dragEnter, dragEnd }}
+            entered={entered == rowIndex}
             list={lists[rowIndex]}
           />
         ))}
@@ -69,17 +75,13 @@ function App() {
 function Task({ rowIndex, colIndex, item, setComments, comments }) {
   const [showComments, setShowComments] = React.useState(true);
   const commentInputRef = React.useRef();
-  const { dragStart, dragEnter, dragEnd } = React.useContext(dragContext);
+  const dragStart  = React.useContext(dragContext);
 
   return (
     <div
       class="item"
       draggable
       onDragStart={() => dragStart(rowIndex, colIndex)}
-      onDragEnter={() => {
-        dragEnter(rowIndex, colIndex);
-      }}
-      onDragEnd={dragEnd}
     >
       <h3>issue: {item}</h3>
       <button onClick={() => setShowComments(!showComments)}>
