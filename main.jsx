@@ -221,9 +221,11 @@ function CommentsManager({ comments, rowIndex, colIndex }) {
   const [showComments, setShowComments] = React.useState(true);
   return (
     <div className="comments-manager">
+        {comments.length? 
       <button onClick={() => setShowComments(!showComments)}>
         {showComments ? "hide comments" : `show (${comments.length}) comments`}
-      </button>
+      </button>: ''}
+
       {showComments ? (
         <div class="comments">
           {comments
