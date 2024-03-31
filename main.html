@@ -9,6 +9,7 @@
       <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
       <style>
         body{
+            text-align: center;
             background-color: black;
 
         }
@@ -73,6 +74,15 @@
                 "person",
                 "i know",
             ])
+            const [comments, setComments] = React.useState([
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+            ])
+            
             const clonedList = [...list]
             let held, entered;
             return(
@@ -98,8 +108,17 @@
                         }}
                         > 
                             <h3>issue: {item}</h3>
+                            <div class="comments">
+                                {comments[index].map(cmnt => <p>{cmnt}</p>)}
+                                    
+                            </div>
+                          
                             <input type="text"/>
-                            <button>comment</button>
+                            <button onClick={() => {
+                                const input = "this is a comment"
+                                comments[index].push(input)
+                                setComments([...comments])
+                            }}>comment</button>
                         </div>
                     )}                    
                 </div>
