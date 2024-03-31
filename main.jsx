@@ -38,14 +38,10 @@ function List({ listName, rowIndex, list, comments, setComments, dragEnter, drag
 
 function App() {
   const [lists, setLists] = React.useState([
-    [],
-    [],
-    [],
+    [],[],[]
   ]);
   const [comments, setComments] = React.useState([
-    [[], [], []],
-    [[], [], []],
-    [[], [], []],
+    [],[],[]
   ]);
 
   let held, entered;
