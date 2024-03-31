@@ -1,7 +1,77 @@
 body{
     text-align: center;
     background-color: black;
+    margin: 0%;
 
+}
+
+
+@keyframes changeColor {
+    0% {
+        background-color: rgba(255, 0, 0, 1); /* Red */
+    }
+    10% {
+        background-color: rgba(255, 165, 0, 1); /* Orange */
+    }
+    20% {
+        background-color: rgba(255, 255, 0, 1); /* Yellow */
+    }
+    30% {
+        background-color: rgba(0, 255, 0, 1); /* Green */
+    }
+    40% {
+        background-color: rgba(0, 0, 255, 1); /* Blue */
+    }
+    50% {
+        background-color: rgba(75, 0, 130, 1); /* Indigo */
+    }
+    60% {
+        background-color: rgba(148, 0, 211, 1); /* Violet */
+    }
+    70% {
+        background-color: rgba(75, 0, 130, 1); /* Indigo */
+    }
+    80% {
+        background-color: rgba(0, 0, 0, 1); /* Black */
+    }
+    90% {
+        background-color: rgba(255, 0, 0, 1); /* Red */
+    }
+    100% {
+        background-color: rgba(255, 0, 0, 1); /* Red */
+    }
+}
+
+
+
+  
+
+
+nav{
+    position: sticky;
+    top: 0%;
+    background-color: black;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    border-bottom: solid 1px white;
+
+}
+
+nav p{
+    background-color: grey;
+    color: white;
+    padding: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    border-radius: 10px;
+    font-size: large;
+    border: 2px solid black;
+
+}
+nav p:hover{
+    cursor: pointer;
+    border: 2px solid lightblue;
 }
 main{
     margin: 4%;
@@ -45,7 +115,7 @@ button{
     
 }
 button:hover{
-    transform: scale(1.1);
+    transform: scale(1.05);
     cursor: pointer;
 
     
