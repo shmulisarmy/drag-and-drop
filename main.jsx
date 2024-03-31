@@ -1,3 +1,9 @@
+
+function changeBackgroundColor(){
+    const colorPicker = document.getElementById("backGroundcolorPicker");
+    document.body.style.backgroundColor = colorPicker.value;
+}
+
 const EmptyListMessage = () => {
   return (
     <h3 style={{ color: "darkorange", padding: "8px" }}>
@@ -27,7 +33,7 @@ function List({
       onDragEnd={dragEnd}
     >
       <h1>
-        #{rowIndex + 1}: {listName}
+        {listName}
       </h1>
       {list.length == 0 ? (
         <EmptyListMessage />
