@@ -1,4 +1,4 @@
-function List() {
+function List({ listName }) {
   const [list, setList] = React.useState([
     "you",
     "are",
@@ -37,6 +37,7 @@ function List() {
 
   return (
     <div class="list">
+      <h1>{listName}</h1>
       {list.map((item, index) => (
         <Task
           index={index}
@@ -53,12 +54,12 @@ function List() {
 }
 
 function App() {
+  const listNames = ["todo", "doing", "done"];
   return (
     <main>
-      <List />
-      <List />
-      <List />
-      <List />
+      {listNames.map((listName) => (
+        <List {...{ listName }} />
+      ))}
     </main>
   );
 }
@@ -79,7 +80,8 @@ function Task({
       class="item"
       draggable
       onDragStart={() => dragStart(index)}
-      onDragEnter={() => dragEnter(index)}
+      onDragEnter={() => {
+        dragEnter(index)}}
       onDragEnd={() => dragEnd()}
     >
       <h3>issue: {item}</h3>
@@ -113,7 +115,7 @@ function Task({
   comments,
 }) {
   const [showComments, setShowComments] = React.useState(true);
-  const commentInputRef = React.useRef()  
+  const commentInputRef = React.useRef();
 
   return (
     <div
@@ -126,30 +128,36 @@ function Task({
       onDragEnd={dragEnd}
     >
       <h3>issue: {item}</h3>
-      <button onClick={() => setShowComments(!showComments)}>{showComments? "hide comments": "show comments"} </button>
-      {showComments? <div class="comments">
-        {comments[index].map((cmnt) => (
-          <p>{cmnt}</p>
-        ))}
-      </div>: ""}
-      <form >
-
-      <input ref={commentInputRef} type="text" />
-      <button type="submit"
-        onClick={(event) => {
-            event.preventDefault()
-          const input = commentInputRef.current.value;
-          if (!input){
-            return
-          }
-          comments[index].push(input);
-          setComments([...comments]);
-          setShowComments(true)
-          commentInputRef.current.value = ''
-        }}
-      >
-        comment
+      <button onClick={() => setShowComments(!showComments)}>
+        {showComments ? "hide comments" : "show comments"}{" "}
       </button>
+      {showComments ? (
+        <div class="comments">
+          {comments[index].map((cmnt) => (
+            <p>{cmnt}</p>
+          ))}
+        </div>
+      ) : (
+        ""
+      )}
+      <form>
+        <input ref={commentInputRef} type="text" />
+        <button
+          type="submit"
+          onClick={(event) => {
+            event.preventDefault();
+            const input = commentInputRef.current.value;
+            if (!input) {
+              return;
+            }
+            comments[index].push(input);
+            setComments([...comments]);
+            setShowComments(true);
+            commentInputRef.current.value = "";
+          }}
+        >
+          comment
+        </button>
       </form>
     </div>
   );

@@ -12,19 +12,44 @@ main{
     width: 200px;
     border: 1px solid black;
     border-radius: 10px;
-    background-color: grey;
+    background-color: rgb(65, 64, 64);
 
 }
 .item{
     margin: 8px;
     border: 1px solid black;
     border-radius: 10px;
-    background-color: white;
+    background-color: black;
+    color: white;
 }
-.item:hover{
-    cursor: pointer;
+.item:hover, .item:active{
+    cursor: cell;
+
+    border: 3px solid blue;
+     
 }
-main .item:active{
-    border: 1px solid purple;
+.item:active{
+    animation: hide .1s forwards;
+}
+@keyframes hide {
+    100% {
+        opacity: .1;
+    }
     
+}
+
+button{
+    background-color: black;
+    color: white;
+    border-radius: 10px;
+    
+}
+button:hover{
+    transform: scale(1.1);
+    cursor: pointer;
+
+    
+}
+input{
+    border-radius: 10px;
 }
