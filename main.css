@@ -38,6 +38,7 @@ main{
     gap: 20px;
 }
 .list{
+    position: relative;
     width: 200px;
     border: 1px solid black;
     border-radius: 10px;
@@ -124,7 +125,6 @@ input{
 }
 .edit-button{
     right: var(--unit-inset);
-
 }
 
 .edit-button img{
@@ -136,4 +136,14 @@ input{
     background-color: rgb(35, 47, 13);
     border-radius: 10px;
     margin: 8px;
+}
+#add-category-button{
+    height: 40px;
+}
+
+.delete-list-button{
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    color: red;
 }

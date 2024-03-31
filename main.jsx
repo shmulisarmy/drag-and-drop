@@ -1,13 +1,12 @@
-
-function changeBackgroundColor(){
-    const colorPicker = document.getElementById("backGroundcolorPicker");
-    document.body.style.backgroundColor = colorPicker.value;
+function changeBackgroundColor() {
+  const colorPicker = document.getElementById("backGroundcolorPicker");
+  document.body.style.backgroundColor = colorPicker.value;
 }
 
 const EmptyListMessage = () => {
   return (
     <h3 style={{ color: "darkorange", padding: "8px" }}>
-      This list is empty. would you like to add a task
+      This list is empty. would you like to add a task?
     </h3>
   );
 };
@@ -22,6 +21,8 @@ function List({
   dragEnd,
   entered,
   addTask,
+  addList,
+  deleteList,
 }) {
   const inputRef = React.useRef();
   return (
@@ -32,9 +33,14 @@ function List({
       }}
       onDragEnd={dragEnd}
     >
-      <h1>
-        {listName}
-      </h1>
+      <button
+        class="delete-list-button"
+        onClick={() => {
+          deleteList(rowIndex);
+        }}
+      >X</button>
+
+      <h1>{listName}</h1>
       {list.length == 0 ? (
         <EmptyListMessage />
       ) : (
@@ -65,8 +71,29 @@ function List({
 function App() {
   const [lists, setLists] = React.useState([[], [], []]);
   const [comments, setComments] = React.useState([[], [], []]);
+  const [listNames, setListNames] = React.useState(["todo", "doing", "done"]);
 
   let held, entered;
+
+  function addList() {
+    setLists([...lists, []]);
+    setComments([...comments, []]);
+    setListNames([...listNames, prompt("new category: ")]);
+  }
+
+  function deleteList(listIndex) {
+    const clonedLists = [...lists];
+    const clonedComments = [...comments];
+    const clonedListNames = [...listNames];
+
+    delete clonedLists[listIndex];
+    delete clonedComments[listIndex];
+    delete clonedListNames[listIndex];
+
+    setLists(clonedLists);
+    setComments(clonedComments);
+    setListNames(clonedListNames);
+  }
 
   function createComment(rowIndex, colIndex, input) {
     comments[rowIndex][colIndex].push(`${thisUser}: ${input}`);
@@ -84,13 +111,12 @@ function App() {
     setComments(clonedComments);
   }
   function editTask(rowIndex, colIndex, newTaskName) {
-    if (newTaskName){
+    if (newTaskName) {
+      const clonedLists = [...lists];
 
-        const clonedLists = [...lists];
-        
-        clonedLists[rowIndex][colIndex] = newTaskName;
-        
-        setLists(clonedLists);
+      clonedLists[rowIndex][colIndex] = newTaskName;
+
+      setLists(clonedLists);
     }
   }
 
@@ -128,33 +154,35 @@ function App() {
     setComments(clonedComments);
   }
 
-  const listNames = ["todo", "doing", "done"];
   return (
     <main>
       <createCommentContext.Provider value={createComment}>
         <dragContext.Provider value={dragStart}>
           <deleteTaskContext.Provider value={deleteTask}>
-          <editTaskContext.Provider value={editTask}>
-          
-            {listNames.map((listName, rowIndex) => (
-              <List
-                {...{
-                  listName,
-                  rowIndex,
-                  comments,
-                  setComments,
-                  dragEnter,
-                  dragEnd,
-                  addTask,
-                }}
-                entered={entered == rowIndex}
-                list={lists[rowIndex]}
-              />
-            ))}
+            <editTaskContext.Provider value={editTask}>
+              {listNames.map((listName, rowIndex) => (
+                <List
+                  {...{
+                    listName,
+                    rowIndex,
+                    comments,
+                    setComments,
+                    dragEnter,
+                    dragEnd,
+                    addTask,
+                    deleteList,
+                  }}
+                  entered={entered == rowIndex}
+                  list={lists[rowIndex]}
+                />
+              ))}
             </editTaskContext.Provider>
-            </deleteTaskContext.Provider>
+          </deleteTaskContext.Provider>
         </dragContext.Provider>
       </createCommentContext.Provider>
+      <button id="add-category-button" onClick={addList}>
+        add a category
+      </button>
     </main>
   );
 }
@@ -163,30 +191,35 @@ function Task({ rowIndex, colIndex, item, setComments, comments }) {
   const dragStart = React.useContext(dragContext);
   const deleteTask = React.useContext(deleteTaskContext);
   const editTask = React.useContext(editTaskContext);
-  
+
   return (
     <div
       class="item"
       draggable
       onDragStart={() => dragStart(rowIndex, colIndex)}
     >
-        <div className="delete-and-edit-task-buttons">
-
-      <button
-        class="delete-task-button"
-        onClick={() => {
-          deleteTask(rowIndex, colIndex);
-        }}
-      >
-        X
-      </button>
-        <img class="edit-button" src="assets/notepad.png" onClick={() => editTask(rowIndex, colIndex, prompt("new task name: "))} alt="" />
-
+      <div className="delete-and-edit-task-buttons">
+        <button
+          class="delete-task-button"
+          onClick={() => {
+            deleteTask(rowIndex, colIndex);
+          }}
+        >
+          X
+        </button>
+        <img
+          class="edit-button"
+          src="assets/notepad.png"
+          onClick={() =>
+            editTask(rowIndex, colIndex, prompt("new task name: "))
+          }
+          alt=""
+        />
       </div>
 
       <div class="task-name">
         <h3>{item}</h3>
-        </div>
+      </div>
       <CommentsManager
         {...{ rowIndex, colIndex }}
         comments={comments[rowIndex][colIndex]}
@@ -227,10 +260,15 @@ function CommentsManager({ comments, rowIndex, colIndex }) {
   const [showComments, setShowComments] = React.useState(true);
   return (
     <div className="comments-manager">
-        {comments.length? 
-      <button onClick={() => setShowComments(!showComments)}>
-        {showComments ? "hide comments" : `show (${comments.length}) comments`}
-      </button>: ''}
+      {comments.length ? (
+        <button onClick={() => setShowComments(!showComments)}>
+          {showComments
+            ? "hide comments"
+            : `show (${comments.length}) comments`}
+        </button>
+      ) : (
+        ""
+      )}
 
       {showComments ? (
         <div class="comments">
