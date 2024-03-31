@@ -1,129 +1,83 @@
-function List({ listName }) {
-  const [list, setList] = React.useState([
-    "you",
-    "are",
-    "the",
-    "best",
-    "person",
-    "i know",
-  ]);
-  const [comments, setComments] = React.useState([[], [], [], [], [], []]);
-
-  let held, entered;
-
-  function dragEnter(index) {
-    entered = index;
-  }
-  function dragEnd() {
-    const clonedList = [...list];
-    const clonedComments = [...comments];
-
-    var temp = clonedList[entered];
-    clonedList[entered] = clonedList[held];
-    clonedList[held] = temp;
-    console.log("clonedList:", clonedList);
-    setList(clonedList);
-
-    temp = clonedComments[entered];
-    clonedComments[entered] = clonedComments[held];
-    clonedComments[held] = temp;
-    console.log("clonedComments:", clonedComments);
-    setComments(clonedComments);
-  }
-
-  function dragStart(index) {
-    held = index;
-  }
-
+function List({ listName, rowIndex, list, comments, setComments }) {
   return (
     <div class="list">
-      <h1>{listName}</h1>
-      {list.map((item, index) => (
-        <Task
-          index={index}
-          item={item}
-          dragStart={dragStart}
-          dragEnter={dragEnter}
-          dragEnd={dragEnd}
-          setComments={setComments}
-          comments={comments}
-        />
+      <h1>
+        #{rowIndex + 1}: {listName}
+      </h1>
+      {list.map((item, colIndex) => (
+        <Task {...{ colIndex, rowIndex, item, setComments, comments }} />
       ))}
     </div>
   );
 }
 
 function App() {
+  const [lists, setLists] = React.useState([
+    ["you", "are", "the"],
+    ["best", "person", "i know"],
+    ["the", "coolest", "person"],
+  ]);
+  const [comments, setComments] = React.useState([
+    [[], [], []],
+    [[], [], []],
+    [[], [], []],
+  ]);
+
+  let held, entered;
+
+  function dragStart(rowIndex, colIndex) {
+    held = [rowIndex, colIndex];
+  }
+
+  function dragEnter(rowIndex, colIndex) {
+    entered = [rowIndex, colIndex];
+  }
+  function dragEnd() {
+    const clonedLists = [...lists];
+    const clonedComments = [...comments];
+
+    var temp = clonedLists[entered[0]][entered[1]];
+    clonedLists[entered] = clonedLists[entered[0]][entered[1]];
+    clonedLists[held] = temp;
+    console.log("clonedLists:", clonedLists);
+    setLists(clonedLists);
+
+    temp = clonedComments[entered[0]][entered[1]];
+    clonedComments[entered[0]][entered[1]] =
+      clonedComments[entered[0]][entered[1]];
+    clonedComments[entered[0]][entered[1]] = temp;
+    console.log("clonedComments:", clonedComments);
+    setComments(clonedComments);
+  }
+
   const listNames = ["todo", "doing", "done"];
   return (
     <main>
-      {listNames.map((listName) => (
-        <List {...{ listName }} />
-      ))}
+      <dragContext.Provider value={{ dragStart, dragEnter, dragEnd }}>
+        {listNames.map((listName, rowIndex) => (
+          <List
+            {...{ listName, rowIndex, comments, setComments }}
+            list={lists[rowIndex]}
+          />
+        ))}
+      </dragContext.Provider>
     </main>
   );
 }
 
-ReactDOM.render(<App />, document.querySelector("#root"));
 
-function Task({
-  index,
-  item,
-  dragStart,
-  dragEnter,
-  dragEnd,
-  setComments,
-  comments,
-}) {
-  return (
-    <div
-      class="item"
-      draggable
-      onDragStart={() => dragStart(index)}
-      onDragEnter={() => {
-        dragEnter(index)}}
-      onDragEnd={() => dragEnd()}
-    >
-      <h3>issue: {item}</h3>
-      <div class="comments">
-        {comments[index].map((cmnt) => (
-          <p>{cmnt}</p>
-        ))}
-      </div>
-
-      <input type="text" />
-      <button
-        onClick={() => {
-          const input = "this is a comment";
-          comments[index].push(input);
-          setComments([...comments]);
-        }}
-      >
-        comment
-      </button>
-    </div>
-  );
-}
-
-function Task({
-  index,
-  item,
-  dragStart,
-  dragEnter,
-  dragEnd,
-  setComments,
-  comments,
-}) {
+function Task({ rowindex, colindex, item, setComments, comments }) {
   const [showComments, setShowComments] = React.useState(true);
   const commentInputRef = React.useRef();
+  const { dragStart, dragEnter, dragEnd } = React.useContext(dragContext);
 
   return (
     <div
       class="item"
       draggable
-      onDragStart={() => dragStart(index)}
+      onDragStart={() => dragStart(rowindex, colindex)}
       onDragEnter={() => {
-        dragEnter(index);
+        dragEnter(rowindex, colindex);
       }}
       onDragEnd={dragEnd}
     >
@@ -133,7 +87,7 @@ function Task({
       </button>
       {showComments ? (
         <div class="comments">
-          {comments[index].map((cmnt) => (
+          {comments[rowindex][colindex].map((cmnt) => (
             <p>{cmnt}</p>
           ))}
         </div>
@@ -148,12 +102,13 @@ function Task({
             event.preventDefault();
             const input = commentInputRef.current.value;
             if (!input) {
+                alert("no content provided as input")
               return;
             }
-            comments[index].push(input);
+            comments[rowindex][colindex].push(input);
+            commentInputRef.current.value = "";
             setComments([...comments]);
             setShowComments(true);
-            commentInputRef.current.value = "";
           }}
         >
           comment
@@ -162,3 +117,6 @@ function Task({
     </div>
   );
 }
+
+const dragContext = React.createContext(null);
+ReactDOM.render(<App />, document.querySelector("#root"));
