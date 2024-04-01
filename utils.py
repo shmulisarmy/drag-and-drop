@@ -1,5 +1,6 @@
 import hashlib
-from data import accountInfo
+from data import accountInfo, accounts
+
 
 def getter(session, *attrs) -> list[any]:
     """
@@ -37,4 +38,3 @@ def hash(password: str) -> str:
     hash_object = hashlib.sha256()
     hash_object.update(password_bytes)
     return hash_object.hexdigest()
-

@@ -13,7 +13,7 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <h1 style={{ color: "red" }}>
-          it seams that an error has accured, call 574-329-1927 for further help
+          it seams that an error has accured, call <span style={{ color: "blue" }}>574-329-1927</span> for further help
           and assistance
         </h1>
       );
@@ -258,14 +258,13 @@ function Task({ rowIndex, colIndex, item, comments }) {
         onDragStart={() => dragStart(rowIndex, colIndex)}
       >
         <div className="delete-and-edit-task-buttons">
-          <button
+        
+            <img 
             class="delete-task-button"
             onClick={() => {
               deleteTask(rowIndex, colIndex);
             }}
-          >
-            X
-          </button>
+            src="static/assets/trash.png" alt="" />
           <img
             class="edit-button"
             src="static/assets/notepad.png"

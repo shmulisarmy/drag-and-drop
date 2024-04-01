@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/nav.css">
+    <link rel="stylesheet" href="static/accountForm.css">
+
+    {% block head %}
+    {% endblock %}
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+</head>
+<body>
+    <nav>
+        <img width="80px" height="80px"
+        {% if profile %}
+        src="static/assets/{{profile}}.png" alt=""
+        {% else %}
+         src="static/assets/profile.png" alt=""
+        {% endif %}
+        >
+        <a href="/home"><p>home</p></a>
+        <a href="/signup"><p>signup</p></a>
+        <a href="/login"><p>login</p></a>
+        <a href="/logout"><p>logout</p></a>
+        <a href="/reset"><p>reset</p></a>
+        <a href="/"><p>board</p></a>
+    </nav>
+    {% if username %}
+       <h1>user: {{username}}</h1>
+       {% else %}
+       <p>you are not logged in right now, do you wanna <a href="/signup">create an account</a> to save your progress, or <a href="/login">login</a> to load saved progress</p>
+    {% endif %}
+    
+    {% block content %}
+    {% if message %}
+        {{message}}
+    {% endif %}
+    {% endblock %}
+</body>
+</html>

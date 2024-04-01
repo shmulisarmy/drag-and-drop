@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    lobby
+{% endblock %}
+
+{% block content %}
+    <section>this page is a good place to meat other people and try out a demo of some of my other sites </section>
+    
+    <div class="users">
+        {% for user in users %}
+            <div class="user">
+                <h1>{{user}}</h1>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
