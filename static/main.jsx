@@ -1,3 +1,27 @@
+class ErrorBoundary extends React.Component {
+  state = { hasError: false, error: null };
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error: error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("Error caught by ErrorBoundary:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <h1 style={{ color: "red" }}>
+          it seams that an error has accured, call 574-329-1927 for further help
+          and assistance
+        </h1>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function changeBackgroundColor(event) {
   event.preventDefault();
   const colorPicker = document.getElementById("backGroundcolorPicker");
@@ -25,47 +49,49 @@ function List({
 }) {
   const inputRef = React.useRef();
   return (
-    <div
-      class={entered ? "list entered" : "list"}
-      onDragEnter={() => {
-        dragEnter(rowIndex);
-      }}
-      onDragEnd={dragEnd}
-    >
-      <button
-        class="delete-list-button"
-        onClick={() => {
-          deleteList(rowIndex);
+    <ErrorBoundary fallback="error is List">
+      <div
+        class={entered ? "list entered" : "list"}
+        onDragEnter={() => {
+          dragEnter(rowIndex);
         }}
+        onDragEnd={dragEnd}
       >
-        X
-      </button>
-
-      <h1>{listName}</h1>
-      {list.length == 0 ? (
-        <EmptyListMessage />
-      ) : (
-        list.map((item, colIndex) => (
-          <Task {...{ colIndex, rowIndex, item, comments }} />
-        ))
-      )}
-      <form class="add-task-form">
-        <input ref={inputRef} type="text" />
         <button
-          onClick={(e) => {
-            e.preventDefault();
-            const inputText = inputRef.current.value;
-            inputRef.current.value = "";
-            if (!inputText) {
-              return;
-            }
-            addTask(rowIndex, inputText);
+          class="delete-list-button"
+          onClick={() => {
+            deleteList(rowIndex);
           }}
         >
-          add task
+          X
         </button>
-      </form>
-    </div>
+
+        <h1>{listName}</h1>
+        {list.length == 0 ? (
+          <EmptyListMessage />
+        ) : (
+          list.map((item, colIndex) => (
+            <Task {...{ colIndex, rowIndex, item, comments }} />
+          ))
+        )}
+        <form class="add-task-form">
+          <input ref={inputRef} type="text" />
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              const inputText = inputRef.current.value;
+              inputRef.current.value = "";
+              if (!inputText) {
+                return;
+              }
+              addTask(rowIndex, inputText);
+            }}
+          >
+            add task
+          </button>
+        </form>
+      </div>
+    </ErrorBoundary>
   );
 }
 
@@ -74,19 +100,18 @@ function App() {
   const [comments, setComments] = React.useState([[[]]]);
   const [listNames, setListNames] = React.useState([""]);
 
-
   let held, entered;
 
   const getData = async () => {
     const response = await fetch("/data");
     const data = await response.json();
-    console.log(data)
-    setLists(data["lists"])    
-    setComments(data["comments"])    
-    setListNames(data["listNames"])    
+    console.log(data);
+    setLists(data["lists"]);
+    setComments(data["comments"]);
+    setListNames(data["listNames"]);
   };
 
-  React.useEffect(getData, [])
+  React.useEffect(getData, []);
 
   React.useEffect(() => {
     fetch("/update", {
@@ -103,7 +128,6 @@ function App() {
       .then((res) => res.text())
       .catch((err) => console.error(err));
   }, [lists, comments, listNames]);
-
 
   function addList() {
     setLists([...lists, []]);
@@ -178,7 +202,7 @@ function App() {
 
     clonedLists[entered].push(lists[rowIndex][colIndex]);
     clonedLists[rowIndex].splice(colIndex, 1);
-    
+
     clonedComments[entered].push(comments[rowIndex][colIndex]);
     clonedComments[rowIndex].splice(colIndex, 1);
 
@@ -188,29 +212,32 @@ function App() {
 
   return (
     <main>
-      <createCommentContext.Provider value={createComment}>
-        <dragContext.Provider value={dragStart}>
-          <deleteTaskContext.Provider value={deleteTask}>
-            <editTaskContext.Provider value={editTask}>
-              {listNames.map((listName, rowIndex) => (
-                <List
-                  {...{
-                    listName,
-                    rowIndex,
-                    comments,
-                    dragEnter,
-                    dragEnd,
-                    addTask,
-                    deleteList,
-                  }}
-                  entered={entered == rowIndex}
-                  list={lists[rowIndex]}
-                />
-              ))}
-            </editTaskContext.Provider>
-          </deleteTaskContext.Provider>
-        </dragContext.Provider>
-      </createCommentContext.Provider>
+      <ErrorBoundary fallback="error is App">
+        <createCommentContext.Provider value={createComment}>
+          <dragContext.Provider value={dragStart}>
+            <deleteTaskContext.Provider value={deleteTask}>
+              <editTaskContext.Provider value={editTask}>
+                {listNames.map((listName, rowIndex) => (
+                  <List
+                    {...{
+                      listName,
+                      rowIndex,
+                      comments,
+                      dragEnter,
+                      dragEnd,
+                      addTask,
+                      deleteList,
+                    }}
+                    entered={entered == rowIndex}
+                    list={lists[rowIndex]}
+                  />
+                ))}
+              </editTaskContext.Provider>
+            </deleteTaskContext.Provider>
+          </dragContext.Provider>
+        </createCommentContext.Provider>
+      </ErrorBoundary>
+
       <button id="add-category-button" onClick={addList}>
         add a category
       </button>
@@ -224,38 +251,40 @@ function Task({ rowIndex, colIndex, item, comments }) {
   const editTask = React.useContext(editTaskContext);
 
   return (
-    <div
-      class="item"
-      draggable
-      onDragStart={() => dragStart(rowIndex, colIndex)}
-    >
-      <div className="delete-and-edit-task-buttons">
-        <button
-          class="delete-task-button"
-          onClick={() => {
-            deleteTask(rowIndex, colIndex);
-          }}
-        >
-          X
-        </button>
-        <img
-          class="edit-button"
-          src="static/assets/notepad.png"
-          onClick={() =>
-            editTask(rowIndex, colIndex, prompt("new task name: "))
-          }
-          alt=""
+    <ErrorBoundary fallback="error in Task">
+      <div
+        class="item"
+        draggable
+        onDragStart={() => dragStart(rowIndex, colIndex)}
+      >
+        <div className="delete-and-edit-task-buttons">
+          <button
+            class="delete-task-button"
+            onClick={() => {
+              deleteTask(rowIndex, colIndex);
+            }}
+          >
+            X
+          </button>
+          <img
+            class="edit-button"
+            src="static/assets/notepad.png"
+            onClick={() =>
+              editTask(rowIndex, colIndex, prompt("new task name: "))
+            }
+            alt=""
+          />
+        </div>
+
+        <div class="task-name">
+          <h3>{item}</h3>
+        </div>
+        <CommentsManager
+          {...{ rowIndex, colIndex }}
+          comments={comments[rowIndex][colIndex]}
         />
       </div>
-
-      <div class="task-name">
-        <h3>{item}</h3>
-      </div>
-      <CommentsManager
-        {...{ rowIndex, colIndex }}
-        comments={comments[rowIndex][colIndex]}
-      />
-    </div>
+    </ErrorBoundary>
   );
 }
 
