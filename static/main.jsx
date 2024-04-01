@@ -25,6 +25,7 @@ class ErrorBoundary extends React.Component {
 function changeBackgroundColor(event) {
   event.preventDefault();
   const colorPicker = document.getElementById("backGroundcolorPicker");
+  alert(colorPicker.value)
   document.body.style.backgroundColor = colorPicker.value;
 }
 
