@@ -31,5 +31,9 @@
        <p>you are not logged in right now, do you wanna <a href="/signup">create an account</a> to save your progress, or <a href="/login">login</a> to load saved progress</p>
     {% endif %}
     <div id="root"></div>
+
+    <script>
+            document.body.style.backgroundColor = localStorage.getItem("bgColor") || "grey";    
+    </script>
 </body>
 </html>

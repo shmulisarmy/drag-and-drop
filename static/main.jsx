@@ -1,3 +1,6 @@
+document.body.style.backgroundColor = localStorage.getItem("bgColor") || "grey";
+
+
 class ErrorBoundary extends React.Component {
   state = { hasError: false, error: null };
 
@@ -25,7 +28,7 @@ class ErrorBoundary extends React.Component {
 function changeBackgroundColor(event) {
   event.preventDefault();
   const colorPicker = document.getElementById("backGroundcolorPicker");
-  alert(colorPicker.value)
+  localStorage.setItem("bgColor", (colorPicker.value))
   document.body.style.backgroundColor = colorPicker.value;
 }
 

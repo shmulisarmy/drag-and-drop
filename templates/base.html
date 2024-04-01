@@ -40,5 +40,11 @@
         {{message}}
     {% endif %}
     {% endblock %}
+
+    {% block script %}
+        <script>
+            document.body.style.backgroundColor = localStorage.getItem("bgColor") || "grey";    
+        </script>
+    {% endblock %}
 </body>
 </html>
