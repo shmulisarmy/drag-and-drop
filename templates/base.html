@@ -23,17 +23,20 @@
         {% endif %}
         >
         <a href="/home"><p>home</p></a>
+        <a href="/lobby"><p>lobby</p></a>
         <a href="/signup"><p>signup</p></a>
         <a href="/login"><p>login</p></a>
         <a href="/logout"><p>logout</p></a>
         <a href="/reset"><p>reset</p></a>
         <a href="/"><p>board</p></a>
     </nav>
-    {% if username %}
-       <h1>user: {{username}}</h1>
-       {% else %}
-       <p>you are not logged in right now, do you wanna <a href="/signup">create an account</a> to save your progress, or <a href="/login">login</a> to load saved progress</p>
-    {% endif %}
+    {% block usernameDisplay %}
+        {% if username %}
+        <h1>user: {{username}}</h1>
+        {% else %}
+        <p>you are not logged in right now, do you wanna <a href="/signup">create an account</a> to save your progress, or <a href="/login">login</a> to load saved progress</p>
+        {% endif %}
+    {% endblock %}
     
     {% block content %}
     {% if message %}

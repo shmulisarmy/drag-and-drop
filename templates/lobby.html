@@ -1,21 +1,49 @@
 {% extends 'base.html' %}
 
+{% block head %}
+    <script src="https://unpkg.com/htmx.org@1.7.0/dist/htmx.min.js"></script>
+    <style>
+        #sites{
+            display: flex;
+            padding: 4%;
+        }
+
+    </style>
+{% endblock %}
+
 {% block title %}
     lobby
 {% endblock %}
 
 {% block content %}
-    <audio controls autoplay>
-        <source src="static/music/song.mp3" type="audio/mpeg">
+    {% block usernameDisplay %}
+    {% endblock %}
+    <audio style="display: none;" id="music" controls autoplay>
+        <source src="static/music/jazz.mp3" type="audio/mpeg">
     </audio>
   
     <section>this page is a good place to meat other people and try out a demo of some of my other sites </section>
-    
-    <div class="users">
+
+    <img src="static/assets/steaming-tea.png" alt="">
+
+    <div id="sites">
+        <iframe src="http://127.0.0.1:5050" onclick="(() => {window.location.href='http://127.0.0.1:5050'})" height="500px" width="300px" style="border-radius: 20px; margin: 4%; border:  10px solid black;"></iframe>
+        <iframe src="https://play2048.co/" height="500px" width="300px" style="border-radius: 20px; margin: 4%; border:  10px solid black;" ></iframe>
+        <iframe src="/" height="500px" width="300px" style="border-radius: 20px; margin: 4%; border:  10px solid black;" ></iframe>
+    </div>
+    <div id="users">
         {% for user in users %}
             <div class="user">
                 <h1>{{user}}</h1>
             </div>
         {% endfor %}
     </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        window.addEventListener("mousedown", () => {
+            document.getElementById("music").play()
+        });
+    </script>
 {% endblock %}

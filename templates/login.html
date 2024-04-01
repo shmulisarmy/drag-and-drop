@@ -10,9 +10,13 @@
 
 {% block content %}
     <form action="/login" method="post">
-        <input type="text" name="username">
+        <label for="username">username</label>
         <br>
-        <input type="password" name="password">
+        <input type="text" name="username" placeholder="jim">
+        <br>
+        <label for="password">password</label>
+        <br>
+        <input type="password" name="password" placeholder="*****">
         <br>
         <button type="submit">login</button>
     </form>
