@@ -32,7 +32,7 @@ def update():
 
 
 userData = {
-    "shmuli": {"lists": [[],[],[]], "listNames": ["todo", "doing", "done"], "comments": [[[]], [[]], [[]]]}
+    "shmuli": {"lists": [[],[],[]], "listNames": ["todo", "doing", "done"], "comments": [[], [], []]}
 }
 if __name__ == "__main__":
     app.run(debug=True)
